@@ -58,4 +58,9 @@ target_link_libraries(
         mmc_rpi3b_lib_shared_dma
 )
 
-
+add_library(mmc_rpi3b_lib_bcm_spi src/bcm_spi.c)
+target_include_directories(mmc_rpi3b_lib_bcm_spi PUBLIC include/)
+target_link_libraries(
+        mmc_rpi3b_lib_bcm_spi
+        lib_sel4cp_rpi3b
+)

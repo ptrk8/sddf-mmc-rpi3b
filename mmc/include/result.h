@@ -24,8 +24,10 @@
 #define result_get_last_err_msg(result) \
     result_get_err_msg_at(result, result_get_num_err_msgs(result) - 1)
 
-typedef struct result result_t;
-struct result {
+typedef bool result_t;
+
+typedef struct result_data result_data_t;
+struct result_data {
     bool is_err;
     const char *err_msgs[MAX_NUM_ERR_MSGS];
     size_t num_err_msgs;

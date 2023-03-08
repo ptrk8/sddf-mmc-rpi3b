@@ -31,7 +31,7 @@ TEST(test_sdhci_cmd, get_delay_should_return_err_if_null_ret_val) {
             .cmdtm = cmdtm,
             .delay = 1000,
     };
-    result res = sdhci_cmd_get_delay(&sdhci_cmd, NULL);
+    result_t res = sdhci_cmd_get_delay(&sdhci_cmd, NULL);
     ASSERT_TRUE(result_is_err(res));
 }
 

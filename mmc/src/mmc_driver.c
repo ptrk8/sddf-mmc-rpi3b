@@ -137,7 +137,7 @@ void init(void) {
             (bcm_emmc_regs_t *) emmc_base_vaddr
     );
     if (result_is_err(res)) {
-        printf("ERROR: failed to initialize EMMC\n");
+        result_printf(res);
         return;
     }
 

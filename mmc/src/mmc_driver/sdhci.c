@@ -338,62 +338,62 @@ result_t sdhci_send_cmd(
 
     if (is_app_cmd) {
         /* Recursively call ourselves first. */
-        res = sdhci_send_cmd(
+        result_t res_send_cmd = sdhci_send_cmd(
                 bcm_emmc_regs,
                 IX_APP_CMD,
                 arg,
                 sdhci_result
         );
-        if (result_is_err(res)) {
-            return result_err_chain(res, "Failed to send app command in sdhci_send_cmd().");
+        if (result_is_err(res_send_cmd)) {
+            return result_err_chain(res_send_cmd, "Failed to send app command in sdhci_send_cmd().");
         }
     }
 
     /* Wait for command in progress. */
-    res = sdhci_wait_for_cmd_in_progress(bcm_emmc_regs, sdhci_result);
-    if (result_is_err(res)) {
-        return result_err_chain(res, "Failed to wait for command in progress in sdhci_send_cmd().");
+    result_t res_wait = sdhci_wait_for_cmd_in_progress(bcm_emmc_regs, sdhci_result);
+    if (result_is_err(res_wait)) {
+        return result_err_chain(res_wait, "Failed to wait for command in progress in sdhci_send_cmd().");
     }
 
     /* Clear interrupt flags. */
-    res = bcm_emmc_regs_clear_interrupt(bcm_emmc_regs);
-    if (result_is_err(res)) {
-        return result_err_chain(res, "Failed to clear interrupt flags in sdhci_send_cmd().");
+    result_t res_interrupt = bcm_emmc_regs_clear_interrupt(bcm_emmc_regs);
+    if (result_is_err(res_interrupt)) {
+        return result_err_chain(res_interrupt, "Failed to clear interrupt flags in sdhci_send_cmd().");
     }
 
     /* Set the argument register first. */
-    res = bcm_emmc_regs_set_arg1(
+    result_t res_arg1 = bcm_emmc_regs_set_arg1(
             bcm_emmc_regs,
             arg
     );
-    if (result_is_err(res)) {
-        return result_err_chain(res, "Failed to set argument in sdhci_send_cmd().");
+    if (result_is_err(res_arg1)) {
+        return result_err_chain(res_arg1, "Failed to set argument in sdhci_send_cmd().");
     }
     /* Get the command register value stored in `sdhci_cmd`. */
     cmdtm_t cmdtm;
-    res = sdhci_cmd_get_cmdtm(
+    result_t res_get_cmdtm = sdhci_cmd_get_cmdtm(
             sdhci_cmd,
             &cmdtm
     );
-    if (result_is_err(res)) {
-        return result_err_chain(res, "Failed to get cmdtm in sdhci_send_cmd().");
+    if (result_is_err(res_get_cmdtm)) {
+        return result_err_chain(res_get_cmdtm, "Failed to get cmdtm in sdhci_send_cmd().");
     }
     /* Set the command register to the value obtained from `sdhci_cmd`. */
-    res = bcm_emmc_regs_set_cmdtm(
+    result_t res_set_cmdtm = bcm_emmc_regs_set_cmdtm(
             bcm_emmc_regs,
             cmdtm
     );
-    if (result_is_err(res)) {
-        return result_err_chain(res, "Failed to set cmdtm in sdhci_send_cmd().");
+    if (result_is_err(res_set_cmdtm)) {
+        return result_err_chain(res_set_cmdtm, "Failed to set cmdtm in sdhci_send_cmd().");
     }
     /* Obtain the delay from the command. */
     size_t delay_us = 0;
-    res = sdhci_cmd_get_delay(
+    result_t res_get_delay = sdhci_cmd_get_delay(
             sdhci_cmd,
             &delay_us
     );
-    if (result_is_err(res)) {
-        return result_err_chain(res, "Failed to get delay in sdhci_send_cmd().");
+    if (result_is_err(res_get_delay)) {
+        return result_err_chain(res_get_delay, "Failed to get delay in sdhci_send_cmd().");
     }
     /* Wait for the delay. */
     if (delay_us) {
@@ -401,33 +401,33 @@ result_t sdhci_send_cmd(
     }
 
     /* Wait until command complete interrupt */
-    res = sdhci_wait_for_interrupt(
+    result_t res_wait_done = sdhci_wait_for_interrupt(
             bcm_emmc_regs,
             INT_CMD_DONE,
             sdhci_result
     );
-    if (result_is_err(res)) {
-        return result_err_chain(res, "Failed to wait for command complete interrupt in sdhci_send_cmd().");
+    if (result_is_err(res_wait_done)) {
+        return result_err_chain(res_wait_done, "Failed to wait for command complete interrupt in sdhci_send_cmd().");
     }
 
     /* Get the response from `resp0`. */
     uint32_t resp0;
-    res = bcm_emmc_regs_get_resp0(
+    result_t res_get_resp0 = bcm_emmc_regs_get_resp0(
             bcm_emmc_regs,
             &resp0
     );
-    if (result_is_err(res)) {
-        return result_err_chain(res, "Failed to get resp0 in sdhci_send_cmd().");
+    if (result_is_err(res_get_resp0)) {
+        return result_err_chain(res_get_resp0, "Failed to get resp0 in sdhci_send_cmd().");
     }
 
     /* Get the SDHCI command's response type. */
     cmd_rspns_type_t cmd_rspns_type;
-    res = sdhci_cmd_get_cmd_rspns_type(
+    result_t res_rspns = sdhci_cmd_get_cmd_rspns_type(
             sdhci_cmd,
             &cmd_rspns_type
     );
-    if (result_is_err(res)) {
-        return result_err_chain(res, "Failed to get cmd_rspns_type in sdhci_send_cmd().");
+    if (result_is_err(res_rspns)) {
+        return result_err_chain(res_rspns, "Failed to get cmd_rspns_type in sdhci_send_cmd().");
     }
     /* Handle response depending on the SDHCI command's response type. */
     switch (cmd_rspns_type) {

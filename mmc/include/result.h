@@ -24,6 +24,18 @@
 #define result_get_last_err_msg(result) \
     result_get_err_msg_at(result, result_get_num_err_msgs(result) - 1)
 
+#if MMC_RPI3B_UNIT_TEST
+typedef struct result result_t;
+struct result {
+    bool is_err;
+    const char *err_msgs[MAX_NUM_ERR_MSGS];
+    size_t num_err_msgs;
+    /* `total_num_err` represents the total number of errors in this `result`,
+     * which is >= `num_err_msgs`. This is required since `err_msgs` has a fixed
+     * total capacity of `MAX_NUM_ERR_MSGS`. */
+    size_t total_num_err;
+};
+#else
 typedef bool result_t;
 
 typedef struct result_data result_data_t;
@@ -36,6 +48,7 @@ struct result_data {
      * total capacity of `MAX_NUM_ERR_MSGS`. */
     size_t total_num_err;
 };
+#endif
 
 /**
  * Creates a new Ok result.

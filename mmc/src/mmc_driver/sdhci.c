@@ -388,97 +388,97 @@ result_t sdhci_send_cmd(
     }
     /* Obtain the delay from the command. */
     size_t delay_us = 0;
-    result_t res_get_delay = sdhci_cmd_get_delay(
+    sdhci_cmd_get_delay(
             sdhci_cmd,
             &delay_us
     );
-    if (result_is_err(res_get_delay)) {
-        return result_err_chain(res_get_delay, "Failed to get delay in sdhci_send_cmd().");
-    }
+//    if (result_is_err(res_get_delay)) {
+//        return result_err_chain(res_get_delay, "Failed to get delay in sdhci_send_cmd().");
+//    }
     /* Wait for the delay. */
     if (delay_us) {
         usleep(delay_us);
     }
 
     /* Wait until command complete interrupt */
-    result_t res_wait_done = sdhci_wait_for_interrupt(
-            bcm_emmc_regs,
-            INT_CMD_DONE,
-            sdhci_result
-    );
-    if (result_is_err(res_wait_done)) {
-        return result_err_chain(res_wait_done, "Failed to wait for command complete interrupt in sdhci_send_cmd().");
-    }
-
-    /* Get the response from `resp0`. */
-    uint32_t resp0;
-    result_t res_get_resp0 = bcm_emmc_regs_get_resp0(
-            bcm_emmc_regs,
-            &resp0
-    );
-    if (result_is_err(res_get_resp0)) {
-        return result_err_chain(res_get_resp0, "Failed to get resp0 in sdhci_send_cmd().");
-    }
-
-    /* Get the SDHCI command's response type. */
-    cmd_rspns_type_t cmd_rspns_type;
-    result_t res_rspns = sdhci_cmd_get_cmd_rspns_type(
-            sdhci_cmd,
-            &cmd_rspns_type
-    );
-    if (result_is_err(res_rspns)) {
-        return result_err_chain(res_rspns, "Failed to get cmd_rspns_type in sdhci_send_cmd().");
-    }
-    /* Handle response depending on the SDHCI command's response type. */
-    switch (cmd_rspns_type) {
-        case CMD_NO_RESP: {
-            *sdhci_result = SD_OK;
-            return result_ok();
-        }
-        case CMD_BUSY48BIT_RESP: {
-            *sdhci_result = resp0 & R1_ERRORS_MASK;
-            break;
-        }
-        case CMD_48BIT_RESP: {
-            /* Obtain the command index. */
-            cmd_index_t cmd_index;
-            result_t res_get_cmd_index = sdhci_cmd_get_cmd_index(
-                    sdhci_cmd,
-                    &cmd_index
-            );
-            if (result_is_err(res_get_cmd_index)) {
-                return result_err_chain(res_get_cmd_index, "Failed to get cmd_index in sdhci_send_cmd().");
-            }
-            switch (cmd_index) {
-                case 0x03:
-
-                    break;
-                case 0x08:
-                    /* This is the switch-case for `IX_SEND_IF_COND`. RESP0 contains
-                     * voltage acceptance and check pattern, which should match
-                     * the argument. */
-                    if (resp0 == arg) {
-                        *sdhci_result = SD_OK;
-                        return result_ok();
-                    } else {
-                        *sdhci_result = SD_ERROR;
-                        return result_err("Response from SD card does not match argument in sdhci_send_cmd().");
-                    }
-                case 0x29:
-
-                    break;
-                default:
-
-                    break;
-            }
-            break;
-        }
-        case CMD_136BIT_RESP: {
-
-            *sdhci_result = SD_OK;
-            break;
-        }
-    }
+//    result_t res_wait_done = sdhci_wait_for_interrupt(
+//            bcm_emmc_regs,
+//            INT_CMD_DONE,
+//            sdhci_result
+//    );
+//    if (result_is_err(res_wait_done)) {
+//        return result_err_chain(res_wait_done, "Failed to wait for command complete interrupt in sdhci_send_cmd().");
+//    }
+//
+//    /* Get the response from `resp0`. */
+//    uint32_t resp0;
+//    result_t res_get_resp0 = bcm_emmc_regs_get_resp0(
+//            bcm_emmc_regs,
+//            &resp0
+//    );
+//    if (result_is_err(res_get_resp0)) {
+//        return result_err_chain(res_get_resp0, "Failed to get resp0 in sdhci_send_cmd().");
+//    }
+//
+//    /* Get the SDHCI command's response type. */
+//    cmd_rspns_type_t cmd_rspns_type;
+//    result_t res_rspns = sdhci_cmd_get_cmd_rspns_type(
+//            sdhci_cmd,
+//            &cmd_rspns_type
+//    );
+//    if (result_is_err(res_rspns)) {
+//        return result_err_chain(res_rspns, "Failed to get cmd_rspns_type in sdhci_send_cmd().");
+//    }
+//    /* Handle response depending on the SDHCI command's response type. */
+//    switch (cmd_rspns_type) {
+//        case CMD_NO_RESP: {
+//            *sdhci_result = SD_OK;
+//            return result_ok();
+//        }
+//        case CMD_BUSY48BIT_RESP: {
+//            *sdhci_result = resp0 & R1_ERRORS_MASK;
+//            break;
+//        }
+//        case CMD_48BIT_RESP: {
+//            /* Obtain the command index. */
+//            cmd_index_t cmd_index;
+//            result_t res_get_cmd_index = sdhci_cmd_get_cmd_index(
+//                    sdhci_cmd,
+//                    &cmd_index
+//            );
+//            if (result_is_err(res_get_cmd_index)) {
+//                return result_err_chain(res_get_cmd_index, "Failed to get cmd_index in sdhci_send_cmd().");
+//            }
+//            switch (cmd_index) {
+//                case 0x03:
+//
+//                    break;
+//                case 0x08:
+//                    /* This is the switch-case for `IX_SEND_IF_COND`. RESP0 contains
+//                     * voltage acceptance and check pattern, which should match
+//                     * the argument. */
+//                    if (resp0 == arg) {
+//                        *sdhci_result = SD_OK;
+//                        return result_ok();
+//                    } else {
+//                        *sdhci_result = SD_ERROR;
+//                        return result_err("Response from SD card does not match argument in sdhci_send_cmd().");
+//                    }
+//                case 0x29:
+//
+//                    break;
+//                default:
+//
+//                    break;
+//            }
+//            break;
+//        }
+//        case CMD_136BIT_RESP: {
+//
+//            *sdhci_result = SD_OK;
+//            break;
+//        }
+//    }
 
     return result_err("Response not processed by sdhci_send_cmd().");
 }

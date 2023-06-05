@@ -287,6 +287,13 @@ target_link_libraries(
         mmc_rpi3b_lib_bcm_emmc_regs
 )
 
+add_library(mmc_rpi3b_lib_sdhci_state src/mmc_driver/sdhci_state.c)
+target_include_directories(mmc_rpi3b_lib_sdhci_state PUBLIC include/)
+target_link_libraries(
+        mmc_rpi3b_lib_sdhci_state
+        mmc_rpi3b_lib_result
+)
+
 add_library(mmc_rpi3b_lib_csd src/mmc_driver/sdcard/sdcard_data/csd.c)
 target_include_directories(mmc_rpi3b_lib_csd PUBLIC include/)
 target_link_libraries(
@@ -462,6 +469,7 @@ target_link_libraries(
         mmc_rpi3b_lib_mmc_driver_e2e
         mmc_rpi3b_lib_sdhci
         mmc_rpi3b_lib_sdhci_regs
+        mmc_rpi3b_lib_sdhci_state
         mmc_rpi3b_lib_blk_request_queue
         mmc_rpi3b_lib_blk_request
         mmc_rpi3b_lib_blk_response_queue

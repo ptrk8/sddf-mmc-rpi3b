@@ -14,6 +14,7 @@
 #include "mmc_driver_e2e.h"
 #include "sdhci.h"
 #include "sdhci_regs.h"
+#include "sdhci_state.h"
 #include "blk_request_queue.h"
 #include "blk_request.h"
 #include "blk_response_queue.h"
@@ -23,6 +24,7 @@
 #define MMC_DRIVER_TO_SERIAL_CLIENT_PUTCHAR_CHANNEL (7)
 #define MMC_DRIVER_TO_TIMER_DRIVER_GET_NUM_TICKS_CHANNEL (11)
 #define MMC_DRIVER_TO_FATFS_REQUEST_CHANNEL (16)
+#define ARASAN_SDHCI_CONTROLLER_IRQ_CHANNEL (17)
 
 /**
  * Returns the number of blocks on the SD card.

@@ -309,6 +309,8 @@
             priority="98"
             pp="true">
         <program_image path="mmc_driver.elf"/>
+        <!-- IRQ for SDHCI controller - 32 + 32 + 62 -->
+        <irq irq="126" id="17" />
         <!-- Shared memory region for `timer_driver` PD to pass num ticks to
         `mmc` PD.-->
         <map

@@ -30,6 +30,9 @@ sdcard_t global_sdcard = {0};
 /* Global `sdhci_regs`. */
 sdhci_regs_t global_sdhci_regs = {0};
 
+/* Global `sdhci_state`. */
+sdhci_state_t global_sdhci_state = {0};
+
 void init(void) {
     result_t res;
 
@@ -78,6 +81,13 @@ void init(void) {
     /* Run E2E tests to verify sleep works properly, which our SD card driver
      * depends upon.*/
     mmc_driver_e2e_sleep();
+
+    /* Initialise SDHCI state. */
+    res = sdhci_state_init(&global_sdhci_state);
+    if (result_is_err(res)) {
+        result_printf(res);
+        return;
+    }
 
     /* Initialise SDHCI registers. */
     res = sdhci_regs_init(
@@ -223,6 +233,19 @@ result_t mmc_driver_read_blocks(
 
 void notified(sel4cp_channel ch) {
     switch(ch) {
+        case ARASAN_SDHCI_CONTROLLER_IRQ_CHANNEL: {
+            result_t res = sdhci_state_set_is_waiting_on_irq(
+                    &global_sdhci_state,
+                    false
+            );
+            if (result_is_err(res)) {
+                result_printf(res);
+                return;
+            }
+            /* Acknowledge receipt of the IRQ. */
+            sel4cp_irq_ack(ARASAN_SDHCI_CONTROLLER_IRQ_CHANNEL);
+            break;
+        }
         case MMC_DRIVER_TO_FATFS_REQUEST_CHANNEL: {
             blk_request_queue_t *request_queue = (blk_request_queue_t *) mmc_driver_request_queue;
             blk_response_queue_t *response_queue = (blk_response_queue_t *) mmc_driver_response_queue;

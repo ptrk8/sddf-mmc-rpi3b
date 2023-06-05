@@ -113,6 +113,7 @@ MMC_DRIVER_OBJS := \
 	mmc_driver/sdcard/sdcard_data.o \
 	mmc_driver/sdhci.o \
 	mmc_driver/sdhci_regs.o \
+	mmc_driver/sdhci_state.o \
 	mmc_driver/sdhci/sdhci_result.o \
 	mmc_driver/sdhci/sdhci_cmd.o \
 	mmc_driver/sdhci/sdhci_cmds.o \

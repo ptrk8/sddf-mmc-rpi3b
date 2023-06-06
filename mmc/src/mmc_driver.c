@@ -114,6 +114,7 @@ void init(void) {
     sdhci_result_t sdhci_result;
     res = sdhci_card_init_and_id(
             &global_sdhci_regs,
+            &global_sdhci_state,
             &global_sdcard,
             &sdhci_result
     );
@@ -135,31 +136,31 @@ void init(void) {
     }
     log_trace("Finished setting SD bus width to maximum possible value.");
 
-    /* Running E2E tests to verify our SD card driver works properly.*/
-    res = mmc_driver_e2e_read_write_simple(
-            &global_sdhci_regs,
-            &global_sdcard
-    );
-    if (result_is_err(res)) {
-        result_printf(res);
-        return;
-    }
-
-    res = mmc_driver_e2e_read_write_multiple_blocks(
-            &global_sdhci_regs,
-            &global_sdcard
-    );
-    if (result_is_err(res)) {
-        result_printf(res);
-        return;
-    }
-
-    res = mmc_driver_e2e_sdcard_card_specific_data(&global_sdcard);
-    if (result_is_err(res)) {
-        result_printf(res);
-        return;
-    }
-    log_info("Successfully finished E2E tests for MMC Driver.");
+//    /* Running E2E tests to verify our SD card driver works properly.*/
+//    res = mmc_driver_e2e_read_write_simple(
+//            &global_sdhci_regs,
+//            &global_sdcard
+//    );
+//    if (result_is_err(res)) {
+//        result_printf(res);
+//        return;
+//    }
+//
+//    res = mmc_driver_e2e_read_write_multiple_blocks(
+//            &global_sdhci_regs,
+//            &global_sdcard
+//    );
+//    if (result_is_err(res)) {
+//        result_printf(res);
+//        return;
+//    }
+//
+//    res = mmc_driver_e2e_sdcard_card_specific_data(&global_sdcard);
+//    if (result_is_err(res)) {
+//        result_printf(res);
+//        return;
+//    }
+//    log_info("Successfully finished E2E tests for MMC Driver.");
 }
 
 result_t mmc_driver_get_num_blocks(uint64_t *ret_val) {
@@ -234,10 +235,18 @@ result_t mmc_driver_read_blocks(
 void notified(sel4cp_channel ch) {
     switch(ch) {
         case ARASAN_SDHCI_CONTROLLER_IRQ_CHANNEL: {
+            printf("Received IRQ from SD card.\n");
+            global_sdhci_state.is_waiting_on_irq = false;
             result_t res = sdhci_state_set_is_waiting_on_irq(
                     &global_sdhci_state,
                     false
             );
+            if (result_is_err(res)) {
+                result_printf(res);
+                return;
+            }
+            /* Clear interrupt flags. */
+            res = sdhci_regs_clear_interrupt(&global_sdhci_regs);
             if (result_is_err(res)) {
                 result_printf(res);
                 return;

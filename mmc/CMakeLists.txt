@@ -411,6 +411,7 @@ target_include_directories(mmc_rpi3b_lib_sdhci PUBLIC include/)
 target_link_libraries(
         mmc_rpi3b_lib_sdhci
         mmc_rpi3b_lib_sdhci_regs
+        mmc_rpi3b_lib_sdhci_state
         mmc_rpi3b_lib_result
         mmc_rpi3b_lib_sleep
         mmc_rpi3b_lib_log

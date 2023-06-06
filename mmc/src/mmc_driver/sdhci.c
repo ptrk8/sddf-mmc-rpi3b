@@ -2,11 +2,15 @@
 
 result_t sdhci_card_init_and_id(
         sdhci_regs_t *sdhci_regs,
+        sdhci_state_t *sdhci_state,
         sdcard_t *sdcard,
         sdhci_result_t *sdhci_result
 ) {
     if (sdhci_regs == NULL) {
         return result_err("sdhci_regs is NULL in sdhci_card_init_and_id().");
+    }
+    if (sdhci_state == NULL) {
+        return result_err("sdhci_state is NULL in sdhci_card_init_and_id().");
     }
     if (sdcard == NULL) {
         return result_err("sdcard is NULL in sdhci_card_init_and_id().");
@@ -25,6 +29,7 @@ result_t sdhci_card_init_and_id(
             IDX_GO_IDLE_STATE,
             0,
             sdcard,
+            sdhci_state,
             &sdhci_res_go_idle
     );
     if (result_is_err(res)) {
@@ -40,6 +45,7 @@ result_t sdhci_card_init_and_id(
             IDX_SEND_IF_COND,
             0x000001AA,
             sdcard,
+            sdhci_state,
             &sdhci_res_if_cond
     );
     if (result_is_err(res)) {
@@ -57,6 +63,7 @@ result_t sdhci_card_init_and_id(
                 IDX_APP_SEND_OP_COND,
                 ACMD41_ARG_HC,
                 sdcard,
+                sdhci_state,
                 sdhci_result
         );
         if (result_is_err(res)) {
@@ -114,6 +121,7 @@ result_t sdhci_card_init_and_id(
             IDX_ALL_SEND_CID,
             0,
             sdcard,
+            sdhci_state,
             sdhci_result
     );
     if (result_is_err(res)) {
@@ -128,6 +136,7 @@ result_t sdhci_card_init_and_id(
             IDX_SEND_REL_ADDR,
             0,
             sdcard,
+            sdhci_state,
             sdhci_result
     );
     if (result_is_err(res)) {
@@ -165,6 +174,7 @@ result_t sdhci_card_init_and_id(
             IDX_SEND_CSD,
             rca,
             sdcard,
+            sdhci_state,
             sdhci_result
     );
     if (result_is_err(res)) {
@@ -185,6 +195,7 @@ result_t sdhci_card_init_and_id(
             IDX_CARD_SELECT,
             rca,
             sdcard,
+            sdhci_state,
             sdhci_result
     );
     if (result_is_err(res)) {
@@ -217,6 +228,7 @@ result_t sdhci_card_init_and_id(
             IDX_SEND_SCR,
             0,
             sdcard,
+            sdhci_state,
             sdhci_result
     );
     if (result_is_err(res)) {
@@ -226,6 +238,7 @@ result_t sdhci_card_init_and_id(
     res = sdhci_wait_for_interrupt(
             sdhci_regs,
             INT_READ_RDY,
+            sdhci_state,
             sdhci_result
     );
     if (result_is_err(res)) {
@@ -316,6 +329,7 @@ result_t sdhci_set_max_bus_width(
                 IDX_SET_BUS_WIDTH,
                 rca | 2,
                 sdcard,
+                NULL,
                 sdhci_result
         );
         if (result_is_err(res)) {
@@ -490,6 +504,7 @@ result_t sdhci_transfer_blocks(
                 IDX_SET_BLOCKCNT,
                 num_blocks,
                 sdcard,
+                NULL,
                 sdhci_result
         );
         if (result_is_err(res)) {
@@ -530,6 +545,7 @@ result_t sdhci_transfer_blocks(
             transfer_cmd,
             block_addr,
             sdcard,
+            NULL,
             sdhci_result
     );
     if (result_is_err(res)) {
@@ -542,6 +558,7 @@ result_t sdhci_transfer_blocks(
         res = sdhci_wait_for_interrupt(
                 sdhci_regs,
                 ready_interrupt,
+                NULL,
                 sdhci_result
         );
         if (result_is_err(res)) {
@@ -573,6 +590,7 @@ result_t sdhci_transfer_blocks(
                     IDX_STOP_TRANS,
                     0,
                     sdcard,
+                    NULL,
                     sdhci_result
             );
             if (result_is_err(res)) {
@@ -585,6 +603,7 @@ result_t sdhci_transfer_blocks(
         res = sdhci_wait_for_interrupt(
                 sdhci_regs,
                 INT_DATA_DONE,
+                NULL,
                 sdhci_result
         );
         if (result_is_err(res)) {
@@ -599,6 +618,7 @@ result_t sdhci_transfer_blocks(
                 IDX_STOP_TRANS,
                 0,
                 sdcard,
+                NULL,
                 sdhci_result
         );
         if (result_is_err(res)) {
@@ -746,6 +766,7 @@ result_t sdhci_set_sd_clock(sdhci_regs_t *sdhci_regs, uint32_t freq) {
 result_t sdhci_wait_for_interrupt(
         sdhci_regs_t *sdhci_regs,
         uint32_t interrupt_mask,
+        sdhci_state_t *sdhci_state,
         sdhci_result_t *sdhci_result
 ) {
     if (sdhci_regs == NULL) {
@@ -756,20 +777,39 @@ result_t sdhci_wait_for_interrupt(
     }
     *sdhci_result = SD_ERROR;
     uint32_t mask_with_error = interrupt_mask | INT_ERROR_MASK;
-    /* Wait for the interrupt. We specify a timeout of 1 second. */
-    size_t retries = 100000;
+//    /* Wait for the interrupt. We specify a timeout of 1 second. */
+//    size_t retries = 100000;
     bool is_finished_or_error = false;
     do {
-        usleep(10);
-        result_t res = sdhci_regs_mask_interrupt(
+//        usleep(10);
+        result_t res_diff = sdhci_regs_mask_interrupt(
                 sdhci_regs,
                 mask_with_error,
                 &is_finished_or_error
         );
-        if (result_is_err(res)) {
-            return result_err_chain(res, "Failed to wait for interrupt in sdhci_wait_for_interrupt().");
+        if (result_is_err(res_diff)) {
+            return result_err_chain(res_diff, "Failed to wait for interrupt in sdhci_wait_for_interrupt().");
         }
-    } while (!is_finished_or_error && (retries-- > 0));
+    } while (!is_finished_or_error);
+//    result_t res_set_irq = sdhci_state_set_is_waiting_on_irq(
+//            sdhci_state,
+//            true
+//    );
+//    if (result_is_err(res_set_irq)) {
+//        return result_err_chain(res_set_irq,
+//                                "Failed to set waiting on IRQ in sdhci_wait_for_interrupt().");
+//    }
+//    bool is_waiting_on_irq = true;
+//    do {
+//        result_t res_wait_irq = sdhci_state_is_waiting_on_irq(
+//                sdhci_state,
+//                &is_waiting_on_irq
+//        );
+//        if (result_is_err(res_wait_irq)) {
+//            return result_err_chain(res_wait_irq, "Failed to check if waiting on IRQ in sdhci_wait_for_interrupt().");
+//        }
+//    } while (is_waiting_on_irq);
+//    is_finished_or_error = true;
     /* Read interrupt. */
     uint32_t interrupt_raw32 = 0;
     result_t res_get_raw32 = sdhci_regs_get_interrupt_raw32(
@@ -928,6 +968,7 @@ result_t sdhci_send_cmd(
         size_t sdhci_cmd_index,
         uint32_t arg,
         sdcard_t *sdcard,
+        sdhci_state_t *sdhci_state,
         sdhci_result_t *sdhci_result
 ) {
     if (sdhci_regs == NULL) {
@@ -1006,6 +1047,7 @@ result_t sdhci_send_cmd(
                 app_cmd_index, /* This will change depending on if RCA exists or not. */
                 app_cmd_arg,
                 sdcard,
+                sdhci_state,
                 sdhci_result
         );
         if (result_is_err(res)) {
@@ -1080,6 +1122,7 @@ result_t sdhci_send_cmd(
     res = sdhci_wait_for_interrupt(
             sdhci_regs,
             INT_CMD_DONE,
+            sdhci_state,
             sdhci_result
     );
     if (result_is_err(res)) {

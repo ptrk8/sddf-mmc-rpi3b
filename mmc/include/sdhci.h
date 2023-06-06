@@ -2,7 +2,7 @@
 
 #include "result.h"
 #include "sdhci_regs.h"
-//#include "sdhci_regs.h"
+#include "sdhci_state.h"
 #include "sleep.h"
 #include "log.h"
 #include "arith.h"
@@ -19,11 +19,13 @@
 /**
  * Initialises an SD card.
  * @param sdhci_regs
+ * @param sdhci_state
  * @param sdcard
  * @return
  */
 result_t sdhci_card_init_and_id(
         sdhci_regs_t *sdhci_regs,
+        sdhci_state_t *sdhci_state,
         sdcard_t *sdcard,
         sdhci_result_t *sdhci_result
 );
@@ -143,12 +145,14 @@ result_t sdhci_set_sd_clock(
  * Waits for the specified interrupt to be set.
  * @param sdhci_regs
  * @param interrupt_mask
+ * @param sdhci_state
  * @param sdhci_result
  * @return
  */
 result_t sdhci_wait_for_interrupt(
         sdhci_regs_t *sdhci_regs,
         uint32_t interrupt_mask,
+        sdhci_state_t *sdhci_state,
         sdhci_result_t *sdhci_result
 );
 
@@ -180,6 +184,7 @@ result_t sdhci_wait_for_data_in_progress(
  * @param sdhci_cmd_index
  * @param arg
  * @param sdcard
+ * @param sdhci_state
  * @param sdhci_result
  * @return
  */
@@ -188,6 +193,7 @@ result_t sdhci_send_cmd(
         size_t sdhci_cmd_index,
         uint32_t arg,
         sdcard_t *sdcard,
+        sdhci_state_t *sdhci_state,
         sdhci_result_t *sdhci_result
 );
 

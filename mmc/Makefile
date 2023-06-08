@@ -43,6 +43,7 @@ LIB_RESULT_DIR := $(SRC_DIR)/lib_result
 LIB_FATFS_DIR := $(SRC_DIR)/lib_fatfs
 LIB_SDDF_BLK_DIR := $(SRC_DIR)/lib_sddf_blk
 LIB_MEMORY := $(SRC_DIR)/lib_memory
+LIB_RCUTILS := $(SRC_DIR)/lib_rcutils
 
 BOARD_DIR := $(SEL4CP_SDK)/board/$(SEL4CP_BOARD)/$(SEL4CP_CONFIG)
 
@@ -60,12 +61,14 @@ LDFLAGS := \
 	-L$(BOARD_DIR)/lib \
 	-L$(LIB_DIR)/libc \
 	-L$(LIB_DIR)/libmemory \
+	-L$(LIB_DIR)/librcutils \
 
 LIBS := \
 	-lsel4cp \
 	-Tsel4cp.ld \
 	-lc \
 	-lmemory_freelist \
+	-l:librcutils.a \
 
 IMAGE_FILE = $(BUILD_DIR)/loader.img
 REPORT_FILE = $(BUILD_DIR)/report.txt
@@ -82,6 +85,7 @@ CFLAGS += \
 	-I$(LIB_FATFS_DIR) \
 	-I$(LIB_SDDF_BLK_DIR) \
 	-I$(LIB_MEMORY) \
+	-I$(LIB_RCUTILS) \
 
 # Specifies which Object files in $(BUILD_DIR) should be linked.
 SERIAL_DRIVER_OBJS := \

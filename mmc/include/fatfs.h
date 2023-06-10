@@ -11,6 +11,10 @@
 #include "diskio.h"
 #include "mmc_driver_client.h"
 #include "memory_facade.h"
+#include "rcutils/filesystem.h"
+#include "rcl/macros.h"
+//#include "rcl/publisher.h"
+//#include "rcl/logging.h"
 
 #define FATFS_TO_SERIAL_CLIENT_PUTCHAR_CHANNEL (13)
 #define FATFS_TO_MMC_DRIVER_REQUEST_CHANNEL (15)

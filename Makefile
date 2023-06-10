@@ -1,10 +1,14 @@
 PWD_DIR = "$(shell basename $$(pwd))"
 BUILD_DIR := build
+SRC_DIR := mmc/src
 BUILD_UNIT_TEST_DIR := build-unit-test
 RESOURCES_DIR := resources
 
 RCUTILS_LIBRARY := mmc/lib/librcutils
-RCUTILS_SUBMODULE := mmc/lib/librcutils/rcutils-sel4cp
+RCUTILS_SUBMODULE := $(RCUTILS_LIBRARY)/rcutils-sel4cp
+
+RCL_LIBRARY := mmc/lib/librcl
+RCL_SUBMODULE := $(RCL_LIBRARY)/rcl-sel4cp
 
 REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu2204"
 REMOTE_DEST_DIR = "~/remote/$(shell hostname -s)/"
@@ -43,9 +47,21 @@ build-rcutils:
 		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/rcutils-sel4cp/build/librcutils.a \
 		$(RCUTILS_LIBRARY)/librcutils.a
 	cp -r $(RCUTILS_SUBMODULE)/include/rcutils mmc/src/lib_rcutils/rcutils
+	# Some includes are built and located in the remote build directory.
 	scp \
 		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/rcutils-sel4cp/build/include/rcutils/* \
 		mmc/src/lib_rcutils/rcutils/
+
+# Do NOT run this command remotely because this command runs a remote command.
+.PHONY: build-rcl
+build-rcl: directories
+	# Remotely run the build command in rcutils submodule.
+	$(MAKE) -C $(RCL_SUBMODULE) remote MAKE_CMD="build"
+	scp \
+		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/rcl-sel4cp/rcl/build/librcl.a \
+		$(RCL_LIBRARY)/librcl.a
+	mkdir -p $(SRC_DIR)/lib_rcl/rcl
+	cp -r $(RCL_SUBMODULE)/rcl/include/rcl $(SRC_DIR)/lib_rcl/
 
 # =================================
 # Testing

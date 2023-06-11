@@ -74,6 +74,29 @@ result_t fatfs_e2e_stat(void) {
     }
     assert(FR_OK == res);
 
+    /* Testing `fstat` with directory. */
+    const char *dir_path = "fatfs_e2e_stat_dir";
+    res = f_mkdir(dir_path);
+    if (res != FR_OK) {
+        log_info("Error creating directory with res of %d.", res);
+    }
+
+    /* Get file info from `f_stat`. */
+    res = f_stat(dir_path, &fno);
+    if (res != FR_OK) {
+        log_info("Error getting file info with res of %d.", res);
+    }
+    assert(FR_OK == res);
+    /* The file is a directory. */
+    assert(AM_DIR == fno.fattrib);
+
+    /* Delete the directory. */
+    res = f_unlink(dir_path);
+    if (res != FR_OK) {
+        log_info("Error deleting directory with res of %d.", res);
+    }
+    assert(FR_OK == res);
+
     log_info("Finished fatfs_e2e_stat().");
     return result_ok();
 }

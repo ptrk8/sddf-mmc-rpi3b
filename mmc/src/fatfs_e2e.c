@@ -17,6 +17,58 @@ result_t fatfs_e2e_diskio_test(void) {
     return result_ok();
 }
 
+result_t fatfs_e2e_stat(void) {
+    log_info("Starting fatfs_e2e_stat().");
+
+    FATFS fs;
+    FRESULT res;
+    FIL fp = {0};
+    const char *path = "fatfs_e2e_stat.txt";
+
+    res = f_mount(&fs, "", 0);
+    if (res != FR_OK) {
+        log_info("Error mounting FS with res of %d.", res);
+    }
+    assert(FR_OK == res);
+
+    res = f_open(&fp, path, FA_WRITE | FA_CREATE_ALWAYS);
+    if (res != FR_OK) {
+        log_info("Error opening file with res of %d.", res);
+    }
+    assert(FR_OK == res);
+
+    /* Write to the file. */
+    char str[] = "Hello World!";
+    size_t str_len = sizeof(str);
+    unsigned int bytes_written;
+    res = f_write(&fp, str, str_len, (UINT *) &bytes_written);
+    if (res != FR_OK) {
+        log_info("Error writing to file with res of %d.", res);
+    }
+    assert(FR_OK == res);
+    log_info("Wrote %d bytes to file.", bytes_written);
+    assert(str_len == bytes_written);
+
+    /* Close the file to flush it to disk. */
+    res = f_close(&fp);
+    if (res != FR_OK) {
+        log_info("Error closing file with res of %d.", res);
+    }
+
+    /* Get file info from `f_stat`. */
+    FILINFO fno;
+    res = f_stat(path, &fno);
+    if (res != FR_OK) {
+        log_info("Error getting file info with res of %d.", res);
+    }
+    assert(FR_OK == res);
+    log_info("File size is %d bytes.", fno.fsize);
+    assert(str_len == fno.fsize);
+
+    log_info("Finished fatfs_e2e_stat().");
+    return result_ok();
+}
+
 result_t fatfs_e2e_write_close_read_simple(void) {
     log_info("Starting fatfs_e2e_read_write_simple().");
 

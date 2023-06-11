@@ -170,30 +170,33 @@ void init(void) {
         result_printf(res);
         return;
     }
-
+    res = fatfs_e2e_stat();
+    if (result_is_err(res)) {
+        result_printf(res);
+        return;
+    }
     res = fatfs_e2e_write_close_read_simple();
     if (result_is_err(res)) {
         result_printf(res);
         return;
     }
-
     res = fatfs_e2e_write_fsync_read_close_simple();
     if (result_is_err(res)) {
         result_printf(res);
         return;
     }
-
     res = fatfs_e2e_write_read_custom(2 * cluster_size_in_bytes);
     if (result_is_err(res)) {
         result_printf(res);
         return;
     }
-
     res = fatfs_e2e_write_read_custom(10 * cluster_size_in_bytes);
     if (result_is_err(res)) {
         result_printf(res);
         return;
     }
+
+    /* End-to-end tests to verify ROS functionality. */
 
     res = ros_e2e_run_all_tests();
     if (result_is_err(res)) {

@@ -14,6 +14,12 @@
 result_t fatfs_e2e_diskio_test(void);
 
 /**
+ * Tests the `f_stat` function.
+ * @return
+ */
+result_t fatfs_e2e_stat(void);
+
+/**
  * Simple read/write test.
  * @return
  */

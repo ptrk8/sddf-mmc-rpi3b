@@ -22,6 +22,12 @@ result_t ros_e2e_run_all_tests(void);
  * ================================ */
 
 /**
+ * Tests the `rcutils_is_directory` function.
+ * @return
+ */
+result_t ros_e2e_rcutils_is_directory(void);
+
+/**
  * Tests the `rcutils_is_file` function.
  * @return
  */

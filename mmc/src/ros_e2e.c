@@ -5,6 +5,9 @@ result_t ros_e2e_run_all_tests(void) {
 
     result_t res;
 
+    res = ros_e2e_rcutils_is_directory();
+    if (result_is_err(res)) return res;
+
     res = ros_e2e_rcutils_is_file();
     if (result_is_err(res)) return res;
 
@@ -12,6 +15,61 @@ result_t ros_e2e_run_all_tests(void) {
     if (result_is_err(res)) return res;
 
     log_info("Finished ros_e2e_run_all_tests().");
+    return result_ok();
+}
+
+result_t ros_e2e_rcutils_is_directory(void) {
+    log_info("Starting ros_e2e_rcutils_is_directory().");
+
+    FRESULT res;
+    /* Mount FS. */
+    FATFS fs;
+    res = f_mount(&fs, "", 0);
+    if (res != FR_OK) {
+        log_info("Error mounting FS with res of %d.", res);
+    }
+    assert(FR_OK == res);
+
+    /* Delete the directory first. */
+    char const *dir_path = "ros_e2e_rcutils_is_directory_dir";
+    /* Intentionally not checking return code because this might fail if file
+     * doesn't exist. */
+    f_unlink(dir_path);
+
+    /* Create a new directory. */
+    bool res_mkdir = rcutils_mkdir(dir_path);
+    assert(true == res_mkdir);
+
+    /* Checking `rcutils` returns true for directory we just created. */
+    bool is_directory = rcutils_is_directory(dir_path);
+    assert(true == is_directory);
+
+    /* Delete file. */
+    char const *file_path = "ros_e2e_rcutils_is_directory.txt";
+    /* Intentionally not checking return code because this might fail if file
+     * doesn't exist. */
+    f_unlink(file_path);
+
+    /* Creating file. */
+    FIL fp = {0};
+    res = f_open(&fp, file_path, FA_WRITE | FA_CREATE_ALWAYS);
+    if (res != FR_OK) {
+        log_info("Error opening file with res of %d.", res);
+    }
+    assert(FR_OK == res);
+
+    /* Close file. */
+    res = f_close(&fp);
+    if (res != FR_OK) {
+        log_info("Error closing file with res of %d.", res);
+    }
+    assert(FR_OK == res);
+
+    /* File should return `false` for `rcutils_is_directory()` */
+    is_directory = rcutils_is_directory(file_path);
+    assert(false == is_directory);
+
+    log_info("Finished ros_e2e_rcutils_is_directory().");
     return result_ok();
 }
 
@@ -34,10 +92,9 @@ result_t ros_e2e_rcutils_is_file(void) {
 
     /* Delete file. */
     char const *file_path = "ros_e2e_rcutils_is_file.txt";
-    res = f_unlink(file_path);
-    if (res != FR_OK) {
-        log_info("Error deleting file with res of %d.", res);
-    }
+    /* Intentionally not checking return code because this might fail if file
+     * doesn't exist. */
+    f_unlink(file_path);
 
     /* Creating file. */
     FIL fp = {0};
@@ -61,10 +118,9 @@ result_t ros_e2e_rcutils_is_file(void) {
 
     /* Delete the directory first. */
     char const *dir_path = "ros_e2e_rcutils_is_file_dir";
-    res = f_unlink(dir_path);
-    if (res != FR_OK) {
-        log_info("Error deleting directory with res of %d.", res);
-    }
+    /* Intentionally not checking return code because this might fail if file
+     * doesn't exist. */
+    f_unlink(dir_path);
 
     /* Create a new directory. */
     bool res_mkdir = rcutils_mkdir(dir_path);

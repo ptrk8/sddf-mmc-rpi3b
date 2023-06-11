@@ -41,20 +41,27 @@ resources-decompile-dtb-rpi3bp:
 # Do NOT run this command remotely because this command runs a remote command.
 .PHONY: build-rcutils
 build-rcutils:
+	# Copy ff.h and ffconf.h from `lib_fatfs` to the submodule to make sure
+	# FatFs header files stay in sync.
+	cp $(SRC_DIR)/lib_fatfs/ff.h $(RCUTILS_SUBMODULE)/include/fatfs
+	cp $(SRC_DIR)/lib_fatfs/ffconf.h $(RCUTILS_SUBMODULE)/include/fatfs
 	# Remotely run the build command in rcutils submodule.
 	$(MAKE) -C $(RCUTILS_SUBMODULE) remote MAKE_CMD="build"
 	scp \
 		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/rcutils-sel4cp/build/librcutils.a \
 		$(RCUTILS_LIBRARY)/librcutils.a
-	cp -r $(RCUTILS_SUBMODULE)/include/rcutils mmc/src/lib_rcutils/rcutils
-	# Some includes are built and located in the remote build directory.
+	# Copy the files in the submodule's include directory into our include directory.
+	mkdir -p $(SRC_DIR)/lib_rcutils/
+	cp -r $(RCUTILS_SUBMODULE)/include/rcutils $(SRC_DIR)/lib_rcutils/
+	# Some header files are built in the remote build directory so we copy them
+	# over.
 	scp \
 		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/rcutils-sel4cp/build/include/rcutils/* \
-		mmc/src/lib_rcutils/rcutils/
+		$(SRC_DIR)/lib_rcutils/rcutils/
 
 # Do NOT run this command remotely because this command runs a remote command.
 .PHONY: build-rcl
-build-rcl: directories
+build-rcl:
 	# Remotely run the build command in rcutils submodule.
 	$(MAKE) -C $(RCL_SUBMODULE) remote MAKE_CMD="build"
 	scp \

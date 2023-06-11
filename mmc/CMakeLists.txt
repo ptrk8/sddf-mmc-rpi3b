@@ -585,6 +585,7 @@ target_link_libraries(
         mmc_rpi3b_lib_log
         mmc_rpi3b_lib_rcutils
         mmc_rpi3b_lib_rcl
+        mmc_rpi3b_lib_ff
 )
 
 add_library(mmc_rpi3b_lib_fatfs src/fatfs.c)

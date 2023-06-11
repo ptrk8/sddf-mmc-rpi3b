@@ -4,6 +4,7 @@
 #include "result.h"
 #include "assert.h"
 #include "log.h"
+#include "ff.h"
 
 #include "rcutils/filesystem.h"
 #include "rcl/macros.h"

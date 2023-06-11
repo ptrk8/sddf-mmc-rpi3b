@@ -8,6 +8,9 @@ result_t ros_e2e_run_all_tests(void) {
     res = ros_e2e_rcutils_is_file();
     if (result_is_err(res)) return res;
 
+    res = ros_e2e_rcutils_exists();
+    if (result_is_err(res)) return res;
+
     log_info("Finished ros_e2e_run_all_tests().");
     return result_ok();
 }
@@ -50,3 +53,43 @@ result_t ros_e2e_rcutils_is_file(void) {
     log_info("Finished ros_e2e_rcutils_is_file().");
     return result_ok();
 }
+
+result_t ros_e2e_rcutils_exists(void) {
+    log_info("Starting ros_e2e_rcutils_exists().");
+
+    /* Checking that rcutils_exists returns false if file does not exist. */
+    bool exists = rcutils_exists("i_dont_exist.txt");
+    assert(false == exists);
+
+    /* Creating a new file. */
+    FRESULT res;
+    FATFS fs;
+    res = f_mount(&fs, "", 0);
+    if (res != FR_OK) {
+        log_info("Error mounting FS with res of %d.", res);
+    }
+    assert(FR_OK == res);
+
+    FIL fp = {0};
+    char const *path = "ros_e2e_rcutils_exists.txt";
+    res = f_open(&fp, path, FA_WRITE | FA_CREATE_ALWAYS);
+    if (res != FR_OK) {
+        log_info("Error opening file with res of %d.", res);
+    }
+    assert(FR_OK == res);
+
+    res = f_close(&fp);
+    if (res != FR_OK) {
+        log_info("Error closing file with res of %d.", res);
+    }
+    assert(FR_OK == res);
+
+    /* Checking `rcutils` returns true for file that does exist. */
+    log_info("Checking `rcutils` returns true for file that does exist.");
+    exists = rcutils_exists(path);
+    assert(true == exists);
+
+    log_info("Finished ros_e2e_rcutils_exists().");
+    return result_ok();
+}
+

@@ -27,3 +27,9 @@ result_t ros_e2e_run_all_tests(void);
  */
 result_t ros_e2e_rcutils_is_file(void);
 
+/**
+ * Tests the `rcutils_exists` function.
+ * @return
+ */
+result_t ros_e2e_rcutils_exists(void);
+

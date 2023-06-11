@@ -187,6 +187,7 @@ FATFS_OBJS := \
 	lib_fatfs/diskio_test.o \
 	lib_fatfs/ffunicode.o \
 	fatfs_e2e.o \
+	ros_e2e.o \
 	mmc_driver_client/mmc_driver_client.o \
 
 IMAGES := \

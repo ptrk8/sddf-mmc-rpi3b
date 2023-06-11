@@ -195,11 +195,13 @@ void init(void) {
         return;
     }
 
-    log_trace("Finished running E2E tests in MMC Driver Protection Domain!");
+    res = ros_e2e_run_all_tests();
+    if (result_is_err(res)) {
+        result_printf(res);
+        return;
+    }
 
-//    bool val = rcl_logging_rosout_enabled();
-//    log_trace("ROSOUT enabled: %d", val);
-//
+    log_trace("Finished running E2E tests in MMC Driver Protection Domain!");
 }
 
 void notified(sel4cp_channel ch) {

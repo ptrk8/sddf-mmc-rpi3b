@@ -575,9 +575,16 @@ set_target_properties(mmc_rpi3b_lib_rcl PROPERTIES
         IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/lib/librcl/librcl.a
         INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_rcl
 )
+
+add_library(mmc_rpi3b_lib_ros_e2e src/ros_e2e.c)
+target_include_directories(mmc_rpi3b_lib_ros_e2e PUBLIC include/)
 target_link_libraries(
-        mmc_rpi3b_lib_rcl
+        mmc_rpi3b_lib_ros_e2e
+        mmc_rpi3b_lib_result
+        mmc_rpi3b_lib_assert
+        mmc_rpi3b_lib_log
         mmc_rpi3b_lib_rcutils
+        mmc_rpi3b_lib_rcl
 )
 
 add_library(mmc_rpi3b_lib_fatfs src/fatfs.c)
@@ -597,8 +604,7 @@ target_link_libraries(
         mmc_rpi3b_lib_fatfs_e2e
         mmc_rpi3b_lib_diskio
         mmc_rpi3b_lib_mmc_driver_client
-        mmc_rpi3b_lib_rcutils
-        mmc_rpi3b_lib_rcl
+        mmc_rpi3b_lib_ros_e2e
 )
 
 add_library(mmc_rpi3b_lib_mmc_driver_client src/mmc_driver_client/mmc_driver_client.c)

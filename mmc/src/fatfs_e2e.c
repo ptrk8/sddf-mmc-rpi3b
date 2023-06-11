@@ -64,6 +64,15 @@ result_t fatfs_e2e_stat(void) {
     assert(FR_OK == res);
     log_info("File size is %d bytes.", fno.fsize);
     assert(str_len == fno.fsize);
+    /* The file is not a directory. */
+    assert(AM_DIR != fno.fattrib);
+
+    /* Delete the file. */
+    res = f_unlink(path);
+    if (res != FR_OK) {
+        log_info("Error deleting file with res of %d.", res);
+    }
+    assert(FR_OK == res);
 
     log_info("Finished fatfs_e2e_stat().");
     return result_ok();

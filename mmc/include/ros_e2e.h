@@ -7,6 +7,7 @@
 #include "ff.h"
 
 #include "rcutils/filesystem.h"
+#include "rmw/init.h"
 #include "rcl/macros.h"
 //#include "rcl/publisher.h"
 //#include "rcl/logging.h"
@@ -18,8 +19,10 @@
 result_t ros_e2e_run_all_tests(void);
 
 /* ================================
- * Tests for rcutils `filesystem.c` functions.
+ * rcutils
  * ================================ */
+
+/* filesystem.c */
 
 /**
  * Tests the `rcutils_is_directory` function.
@@ -38,4 +41,12 @@ result_t ros_e2e_rcutils_is_file(void);
  * @return
  */
 result_t ros_e2e_rcutils_exists(void);
+
+/* ================================
+ * rmw
+ * ================================ */
+
+/* init.c */
+
+result_t ros_e2e_rmw_get_zero_initialized_context(void);
 

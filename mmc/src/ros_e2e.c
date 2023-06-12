@@ -5,6 +5,8 @@ result_t ros_e2e_run_all_tests(void) {
 
     result_t res;
 
+    /* rcutils */
+
     res = ros_e2e_rcutils_is_directory();
     if (result_is_err(res)) return res;
 
@@ -14,9 +16,20 @@ result_t ros_e2e_run_all_tests(void) {
     res = ros_e2e_rcutils_exists();
     if (result_is_err(res)) return res;
 
+    /* rmw */
+
+    res = ros_e2e_rmw_get_zero_initialized_context();
+    if (result_is_err(res)) return res;
+
     log_info("Finished ros_e2e_run_all_tests().");
     return result_ok();
 }
+
+/* ================================
+ * rcutils
+ * ================================ */
+
+/* filesystem.c */
 
 result_t ros_e2e_rcutils_is_directory(void) {
     log_info("Starting ros_e2e_rcutils_is_directory().");
@@ -170,6 +183,25 @@ result_t ros_e2e_rcutils_exists(void) {
     assert(true == exists);
 
     log_info("Finished ros_e2e_rcutils_exists().");
+    return result_ok();
+}
+
+/* ================================
+ * rmw
+ * ================================ */
+
+/* init.c */
+
+result_t ros_e2e_rmw_get_zero_initialized_context(void) {
+    log_info("Starting ros_e2e_rmw_get_zero_initialized_context().");
+
+    rmw_context_t context = rmw_get_zero_initialized_context();
+    assert(0 == context.instance_id);
+    assert(NULL == context.implementation_identifier);
+    assert(0 == context.actual_domain_id);
+    assert(NULL == context.impl);
+
+    log_info("Finished ros_e2e_rmw_get_zero_initialized_context().");
     return result_ok();
 }
 

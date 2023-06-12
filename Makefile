@@ -10,6 +10,9 @@ RCUTILS_SUBMODULE := $(RCUTILS_LIBRARY)/rcutils-sel4cp
 RCL_LIBRARY := mmc/lib/librcl
 RCL_SUBMODULE := $(RCL_LIBRARY)/rcl-sel4cp
 
+RMW_LIBRARY := mmc/lib/librmw
+RMW_SUBMODULE := $(RMW_LIBRARY)/rmw-sel4cp
+
 REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu2204"
 REMOTE_DEST_DIR = "~/remote/$(shell hostname -s)/"
 
@@ -39,8 +42,14 @@ resources-decompile-dtb-rpi3bp:
 # =================================
 
 # Do NOT run this command remotely because this command runs a remote command.
+.PHONY: clean-rcutils
+clean-rcutils:
+	# Remotely run the build command in rcutils submodule.
+	$(MAKE) -C $(RCUTILS_SUBMODULE) remote MAKE_CMD="clean"
+
+# Do NOT run this command remotely because this command runs a remote command.
 .PHONY: build-rcutils
-build-rcutils:
+build-rcutils: clean-rcutils
 	# Copy ff.h and ffconf.h from `lib_fatfs` to the submodule to make sure
 	# FatFs header files stay in sync.
 	cp $(SRC_DIR)/lib_fatfs/ff.h $(RCUTILS_SUBMODULE)/include/fatfs
@@ -69,6 +78,17 @@ build-rcl:
 		$(RCL_LIBRARY)/librcl.a
 	mkdir -p $(SRC_DIR)/lib_rcl/rcl
 	cp -r $(RCL_SUBMODULE)/rcl/include/rcl $(SRC_DIR)/lib_rcl/
+
+# Do NOT run this command remotely because this command runs a remote command.
+.PHONY: build-rmw
+build-rmw:
+	# Remotely run the build command in rcutils submodule.
+	$(MAKE) -C $(RMW_SUBMODULE) remote MAKE_CMD="build-rmw"
+	scp \
+		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/rmw-sel4cp/rmw/build/librmw.a \
+		$(RMW_LIBRARY)
+	mkdir -p $(SRC_DIR)/lib_rmw/rmw
+	cp -r $(RMW_SUBMODULE)/rmw/include/rmw $(SRC_DIR)/lib_rmw/
 
 # =================================
 # Testing

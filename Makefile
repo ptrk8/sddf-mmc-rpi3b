@@ -13,6 +13,9 @@ RCL_SUBMODULE := $(RCL_LIBRARY)/rcl-sel4cp
 RMW_LIBRARY := mmc/lib/librmw
 RMW_SUBMODULE := $(RMW_LIBRARY)/rmw-sel4cp
 
+MICROCDR_LIBRARY := mmc/lib/libmicrocdr
+MICROCDR_SUBMODULE := $(MICROCDR_LIBRARY)/Micro-CDR-sel4cp
+
 MICROXRCEDDS_CLIENT_LIBRARY := mmc/lib/libmicroxrcedds_client
 MICROXRCEDDS_CLIENT_SUBMODULE := $(MICROXRCEDDS_CLIENT_LIBRARY)/Micro-XRCE-DDS-Client-sel4cp
 
@@ -106,6 +109,26 @@ build-rmw: clean-rmw
 		$(RMW_LIBRARY)
 	mkdir -p $(SRC_DIR)/lib_rmw/rmw
 	cp -r $(RMW_SUBMODULE)/rmw/include/rmw $(SRC_DIR)/lib_rmw/
+
+# Do NOT run this command remotely because this command runs a remote command.
+.PHONY: clean-microcdr
+clean-microcdr:
+	# Remotely run the build command in submodule.
+	$(MAKE) -C $(MICROCDR_SUBMODULE) remote MAKE_CMD="clean"
+
+.PHONY: build-microcdr
+build-microcdr: clean-microcdr
+	# Remotely run the build command in submodule.
+	$(MAKE) -C $(MICROCDR_SUBMODULE) remote MAKE_CMD="build"
+	scp \
+		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/Micro-CDR-sel4cp/build/libmicrocdr.a \
+		$(MICROCDR_LIBRARY)
+	mkdir -p $(SRC_DIR)/lib_microcdr/ucdr
+	cp -r $(MICROCDR_SUBMODULE)/include/ucdr $(SRC_DIR)/lib_microcdr/
+	# Copy over header files that are built in the remote build directory.
+	scp \
+		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/Micro-CDR-sel4cp/build/include/ucdr/config.h \
+		$(SRC_DIR)/lib_microcdr/ucdr/config.h
 
 # Do NOT run this command remotely because this command runs a remote command.
 .PHONY: clean-microxrcedds-client

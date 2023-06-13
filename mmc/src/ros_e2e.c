@@ -27,7 +27,7 @@ result_t ros_e2e_run_all_tests(size_t heap_size) {
     res = ros_e2e_rcutils_exists();
     if (result_is_err(res)) return res;
 
-    /* rmw */
+    /* rmw: init.c */
 
     res = ros_e2e_rmw_get_zero_initialized_context();
     if (result_is_err(res)) return res;

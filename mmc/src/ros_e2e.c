@@ -37,6 +37,11 @@ result_t ros_e2e_run_all_tests(size_t heap_size) {
     res = ros_e2e_micro_cdr_usage_example();
     if (result_is_err(res)) return res;
 
+    /* rosidl_typesupport_microxrcedds_c */
+
+    res = ros_e2e_rosidl_typesupport_microxrcedds_c_sanity();
+    if (result_is_err(res)) return res;
+
     log_info("Finished ros_e2e_run_all_tests().");
     return result_ok();
 }
@@ -383,3 +388,18 @@ result_t ros_e2e_micro_cdr_usage_example(void) {
     log_info("Finished ros_e2e_micro_cdr_usage_example().");
     return result_ok();
 }
+
+/* ================================
+ * rosidl_typesupport_microxrcedds_c
+ * ================================ */
+
+result_t ros_e2e_rosidl_typesupport_microxrcedds_c_sanity(void) {
+    log_info("Starting ros_e2e_rosidl_typesupport_microxrcedds_c_sanity().");
+
+    message_type_support_callbacks_t callbacks = {0};
+    (void) callbacks;
+
+    log_info("Finished ros_e2e_rosidl_typesupport_microxrcedds_c_sanity().");
+    return result_ok();
+}
+

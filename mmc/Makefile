@@ -48,6 +48,9 @@ LIB_RCL := $(SRC_DIR)/lib_rcl
 LIB_RMW := $(SRC_DIR)/lib_rmw
 LIB_MICROXRCEDDS_CLIENT := $(SRC_DIR)/lib_microxrcedds_client
 LIB_MICROCDR := $(SRC_DIR)/lib_microcdr
+LIB_ROSIDL_TYPESUPPORT_MICROXRCEDDS_C := $(SRC_DIR)/lib_rosidl_typesupport_microxrcedds_c
+LIB_ROSIDL_RUNTIME_C := $(SRC_DIR)/lib_rosidl_runtime_c
+LIB_ROSIDL_TYPESUPPORT_INTERFACE := $(SRC_DIR)/lib_rosidl_typesupport_interface
 
 BOARD_DIR := $(SEL4CP_SDK)/board/$(SEL4CP_BOARD)/$(SEL4CP_CONFIG)
 
@@ -67,6 +70,8 @@ LDFLAGS := \
 	-L$(LIB_DIR)/librmw \
 	-L$(LIB_DIR)/librcl \
 	-L$(LIB_DIR)/librcutils \
+	-L$(LIB_DIR)/librosidl_typesupport_microxrcedds_c \
+	-L$(LIB_DIR)/librosidl_runtime_c \
 	-L$(LIB_DIR)/libmicroxrcedds_client \
 	-L$(LIB_DIR)/libmicrocdr \
 	-L$(LIB_DIR)/libc \
@@ -78,6 +83,8 @@ LIBS := \
 	-l:librmw.a \
 	-l:librcl.a \
 	-l:librcutils.a \
+	-l:librosidl_typesupport_microxrcedds_c.a \
+	-l:librosidl_runtime_c.a \
 	-l:libmicroxrcedds_client.a \
 	-l:libmicrocdr.a \
 	-lc \
@@ -102,6 +109,9 @@ CFLAGS += \
 	-I$(LIB_RMW) \
 	-I$(LIB_MICROCDR) \
 	-I$(LIB_MICROXRCEDDS_CLIENT) \
+	-I$(LIB_ROSIDL_TYPESUPPORT_MICROXRCEDDS_C) \
+	-I$(LIB_ROSIDL_RUNTIME_C) \
+	-I$(LIB_ROSIDL_TYPESUPPORT_INTERFACE) \
 
 # Specifies which Object files in $(BUILD_DIR) should be linked.
 SERIAL_DRIVER_OBJS := \

@@ -1,23 +1,34 @@
 PWD_DIR = "$(shell basename $$(pwd))"
 BUILD_DIR := build
 SRC_DIR := mmc/src
+LIB_DIR := mmc/lib
 BUILD_UNIT_TEST_DIR := build-unit-test
 RESOURCES_DIR := resources
 
 RCUTILS_LIBRARY := mmc/lib/librcutils
 RCUTILS_SUBMODULE := $(RCUTILS_LIBRARY)/rcutils-sel4cp
 
-RCL_LIBRARY := mmc/lib/librcl
+RCL_LIBRARY := $(LIB_DIR)/librcl
 RCL_SUBMODULE := $(RCL_LIBRARY)/rcl-sel4cp
 
-RMW_LIBRARY := mmc/lib/librmw
+RMW_LIBRARY := $(LIB_DIR)/librmw
 RMW_SUBMODULE := $(RMW_LIBRARY)/rmw-sel4cp
 
-MICROCDR_LIBRARY := mmc/lib/libmicrocdr
+MICROCDR_LIBRARY := $(LIB_DIR)/libmicrocdr
 MICROCDR_SUBMODULE := $(MICROCDR_LIBRARY)/Micro-CDR-sel4cp
 
-MICROXRCEDDS_CLIENT_LIBRARY := mmc/lib/libmicroxrcedds_client
+MICROXRCEDDS_CLIENT_LIBRARY := $(LIB_DIR)/libmicroxrcedds_client
 MICROXRCEDDS_CLIENT_SUBMODULE := $(MICROXRCEDDS_CLIENT_LIBRARY)/Micro-XRCE-DDS-Client-sel4cp
+
+ROSIDL_TYPESUPPORT_MICROXRCEDDS_LIBRARY := $(LIB_DIR)/librosidl_typesupport_microxrcedds_c
+ROSIDL_TYPESUPPORT_MICROXRCEDDS_SUBMODULE := $(ROSIDL_TYPESUPPORT_MICROXRCEDDS_LIBRARY)/rosidl_typesupport_microxrcedds-sel4cp
+ROSIDL_TYPESUPPORT_MICROXRCEDDS_HEADERS := $(SRC_DIR)/lib_rosidl_typesupport_microxrcedds_c/
+
+ROSIDL_RUNTIME_C_LIBRARY := $(LIB_DIR)/librosidl_runtime_c
+ROSIDL_RUNTIME_C_SUBMODULE := $(ROSIDL_RUNTIME_C_LIBRARY)/rosidl-sel4cp
+ROSIDL_RUNTIME_C_HEADERS := $(SRC_DIR)/lib_rosidl_runtime_c/
+
+ROSIDL_TYPESUPPORT_INTERFACE_HEADERS := $(SRC_DIR)/lib_rosidl_typesupport_interface/
 
 REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu2204"
 REMOTE_DEST_DIR = "~/remote/$(shell hostname -s)/"
@@ -150,6 +161,52 @@ build-microxrcedds-client: clean-microxrcedds-client
 	scp \
 		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/Micro-XRCE-DDS-Client-sel4cp/build/include/uxr/client/config.h \
 		$(SRC_DIR)/lib_microxrcedds_client/uxr/client/config.h
+
+# Do NOT run this command remotely because this command runs a remote command.
+.PHONY: clean-rosidl-typesupport-microxrcedds-c
+clean-rosidl-typesupport-microxrcedds-c:
+	# Remotely run the build command in submodule.
+	$(MAKE) -C $(ROSIDL_TYPESUPPORT_MICROXRCEDDS_SUBMODULE) remote MAKE_CMD="clean"
+
+# Do NOT run this command remotely because this command runs a remote command.
+.PHONY: build-rosidl-typesupport-microxrcedds-c
+build-rosidl-typesupport-microxrcedds-c: clean-rosidl-typesupport-microxrcedds-c
+	# Remotely run the build command in submodule.
+	$(MAKE) -C $(ROSIDL_TYPESUPPORT_MICROXRCEDDS_SUBMODULE) remote MAKE_CMD="build"
+	scp \
+		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/rosidl_typesupport_microxrcedds-sel4cp/rosidl_typesupport_microxrcedds_c/build/librosidl_typesupport_microxrcedds_c.a \
+		$(ROSIDL_TYPESUPPORT_MICROXRCEDDS_LIBRARY)
+	mkdir -p $(ROSIDL_TYPESUPPORT_MICROXRCEDDS_HEADERS)
+	cp -r \
+		$(ROSIDL_TYPESUPPORT_MICROXRCEDDS_SUBMODULE)/rosidl_typesupport_microxrcedds_c/include/rosidl_typesupport_microxrcedds_c \
+		$(ROSIDL_TYPESUPPORT_MICROXRCEDDS_HEADERS)
+
+# Do NOT run this command remotely because this command runs a remote command.
+.PHONY: clean-rosidl-runtime-c
+clean-rosidl-runtime-c:
+	# Remotely run the build command in submodule.
+	$(MAKE) -C $(ROSIDL_RUNTIME_C_SUBMODULE) remote MAKE_CMD="clean"
+
+# Do NOT run this command remotely because this command runs a remote command.
+.PHONY: build-rosidl-runtime-c
+build-rosidl-runtime-c: clean-rosidl-runtime-c
+	# Remotely run the build command in submodule.
+	$(MAKE) -C $(ROSIDL_RUNTIME_C_SUBMODULE) remote MAKE_CMD="build"
+	scp \
+		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/rosidl-sel4cp/rosidl_runtime_c/build/librosidl_runtime_c.a \
+		$(ROSIDL_RUNTIME_C_LIBRARY)
+	mkdir -p $(ROSIDL_RUNTIME_C_HEADERS)
+	cp -r \
+		$(ROSIDL_RUNTIME_C_SUBMODULE)/rosidl_runtime_c/include/rosidl_runtime_c \
+		$(ROSIDL_RUNTIME_C_HEADERS)
+
+# Do NOT run this command remotely because this command runs a remote command.
+.PHONY: build-rosidl-typesupport-interface
+build-rosidl-typesupport-interface:
+	mkdir -p $(ROSIDL_TYPESUPPORT_INTERFACE_HEADERS)
+	cp -r \
+		$(ROSIDL_RUNTIME_C_SUBMODULE)/rosidl_typesupport_interface/include/rosidl_typesupport_interface \
+		$(ROSIDL_TYPESUPPORT_INTERFACE_HEADERS)
 
 # =================================
 # Testing

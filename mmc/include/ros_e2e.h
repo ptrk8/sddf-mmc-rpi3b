@@ -13,6 +13,7 @@
 //#include "rcl/publisher.h"
 //#include "rcl/logging.h"
 #include "ucdr/microcdr.h"
+#include "rosidl_typesupport_microxrcedds_c/message_type_support.h"
 
 /**
  * Runs all tests for `rcutils` functions.
@@ -81,3 +82,9 @@ result_t ros_e2e_rmw_get_zero_initialized_context(void);
  * ================================ */
 
 result_t ros_e2e_micro_cdr_usage_example(void);
+
+/* ================================
+ * rosidl_typesupport_microxrcedds_c
+ * ================================ */
+
+result_t ros_e2e_rosidl_typesupport_microxrcedds_c_sanity(void);

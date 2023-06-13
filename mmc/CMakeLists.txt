@@ -570,6 +570,21 @@ set_target_properties(mmc_rpi3b_lib_microcdr PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_microcdr
 )
 
+add_library(mmc_rpi3b_lib_rosidl_typesupport_interface INTERFACE)
+target_include_directories(mmc_rpi3b_lib_rosidl_typesupport_interface INTERFACE include/)
+
+add_library(mmc_rpi3b_lib_rosidl_runtime_c SHARED IMPORTED)
+set_target_properties(mmc_rpi3b_lib_rosidl_runtime_c PROPERTIES
+        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/lib/librosidl_runtime_c/librosidl_runtime_c.a
+        INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_rosidl_runtime_c
+)
+
+add_library(mmc_rpi3b_lib_rosidl_typesupport_microxrcedds_c SHARED IMPORTED)
+set_target_properties(mmc_rpi3b_lib_rosidl_typesupport_microxrcedds_c PROPERTIES
+        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/lib/librosidl_typesupport_microxrcedds_c/librosidl_typesupport_microxrcedds_c.a
+        INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_rosidl_typesupport_microxrcedds_c
+)
+
 add_library(mmc_rpi3b_lib_rcutils SHARED IMPORTED)
 set_target_properties(mmc_rpi3b_lib_rcutils PROPERTIES
         IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/lib/librcutils/librcutils.a
@@ -600,6 +615,9 @@ target_link_libraries(
         mmc_rpi3b_lib_rcl
         mmc_rpi3b_lib_rmw
         mmc_rpi3b_lib_microcdr
+        mmc_rpi3b_lib_rosidl_runtime_c
+        mmc_rpi3b_lib_rosidl_typesupport_microxrcedds_c
+        mmc_rpi3b_lib_rosidl_typesupport_interface
 )
 
 add_library(mmc_rpi3b_lib_fatfs src/fatfs.c)

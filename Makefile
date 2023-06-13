@@ -13,6 +13,9 @@ RCL_SUBMODULE := $(RCL_LIBRARY)/rcl-sel4cp
 RMW_LIBRARY := mmc/lib/librmw
 RMW_SUBMODULE := $(RMW_LIBRARY)/rmw-sel4cp
 
+MICROXRCEDDS_CLIENT_LIBRARY := mmc/lib/libmicroxrcedds_client
+MICROXRCEDDS_CLIENT_SUBMODULE := $(MICROXRCEDDS_CLIENT_LIBRARY)/Micro-XRCE-DDS-Client-sel4cp
+
 REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu2204"
 REMOTE_DEST_DIR = "~/remote/$(shell hostname -s)/"
 
@@ -43,7 +46,11 @@ resources-decompile-dtb-rpi3bp:
 
 # Do NOT run this command remotely because this command runs a remote command.
 .PHONY: build
-build: build-rcutils build-rcl build-rmw
+build: \
+	build-rcutils \
+	build-rcl \
+	build-rmw \
+	build-microxrcedds-client
 
 # Do NOT run this command remotely because this command runs a remote command.
 .PHONY: clean-rcutils
@@ -92,13 +99,33 @@ clean-rmw:
 # Do NOT run this command remotely because this command runs a remote command.
 .PHONY: build-rmw
 build-rmw: clean-rmw
-	# Remotely run the build command in rcutils submodule.
+	# Remotely run the build command in rmw submodule.
 	$(MAKE) -C $(RMW_SUBMODULE) remote MAKE_CMD="build-rmw"
 	scp \
 		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/rmw-sel4cp/rmw/build/librmw.a \
 		$(RMW_LIBRARY)
 	mkdir -p $(SRC_DIR)/lib_rmw/rmw
 	cp -r $(RMW_SUBMODULE)/rmw/include/rmw $(SRC_DIR)/lib_rmw/
+
+# Do NOT run this command remotely because this command runs a remote command.
+.PHONY: clean-microxrcedds-client
+clean-microxrcedds-client:
+	# Remotely run the build command in submodule.
+	$(MAKE) -C $(MICROXRCEDDS_CLIENT_SUBMODULE) remote MAKE_CMD="clean"
+
+.PHONY: build-microxrcedds-client
+build-microxrcedds-client: clean-microxrcedds-client
+	# Remotely run the build command in submodule.
+	$(MAKE) -C $(MICROXRCEDDS_CLIENT_SUBMODULE) remote MAKE_CMD="build"
+	scp \
+		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/Micro-XRCE-DDS-Client-sel4cp/build/libmicroxrcedds_client.a \
+		$(MICROXRCEDDS_CLIENT_LIBRARY)
+	mkdir -p $(SRC_DIR)/lib_microxrcedds_client/uxr
+	cp -r $(MICROXRCEDDS_CLIENT_SUBMODULE)/include/uxr $(SRC_DIR)/lib_microxrcedds_client/
+	# Copy over header files that are built in the remote build directory.
+	scp \
+		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/Micro-XRCE-DDS-Client-sel4cp/build/include/uxr/client/config.h \
+		$(SRC_DIR)/lib_microxrcedds_client/uxr/client/config.h
 
 # =================================
 # Testing

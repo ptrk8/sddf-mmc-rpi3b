@@ -564,6 +564,12 @@ target_link_libraries(
         mmc_rpi3b_lib_memory_facade
 )
 
+add_library(mmc_rpi3b_lib_microcdr SHARED IMPORTED)
+set_target_properties(mmc_rpi3b_lib_microcdr PROPERTIES
+        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/lib/libmicrocdr/libmicrocdr.a
+        INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_microcdr
+)
+
 add_library(mmc_rpi3b_lib_rcutils SHARED IMPORTED)
 set_target_properties(mmc_rpi3b_lib_rcutils PROPERTIES
         IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/lib/librcutils/librcutils.a
@@ -593,6 +599,7 @@ target_link_libraries(
         mmc_rpi3b_lib_rcutils
         mmc_rpi3b_lib_rcl
         mmc_rpi3b_lib_rmw
+        mmc_rpi3b_lib_microcdr
 )
 
 add_library(mmc_rpi3b_lib_fatfs src/fatfs.c)

@@ -32,6 +32,11 @@ result_t ros_e2e_run_all_tests(size_t heap_size) {
     res = ros_e2e_rmw_get_zero_initialized_context();
     if (result_is_err(res)) return res;
 
+    /* Micro CDR */
+
+    res = ros_e2e_micro_cdr_usage_example();
+    if (result_is_err(res)) return res;
+
     log_info("Finished ros_e2e_run_all_tests().");
     return result_ok();
 }
@@ -336,3 +341,39 @@ result_t ros_e2e_rmw_get_zero_initialized_context(void) {
     return result_ok();
 }
 
+/* ================================
+ * Micro CDR
+ * ================================ */
+
+result_t ros_e2e_micro_cdr_usage_example(void) {
+    log_info("Starting ros_e2e_micro_cdr_usage_example().");
+
+    /* Following example from: https://github.com/patrick-ros2/Micro-CDR-sel4cp#usage-examples */
+
+    // Data buffer
+    uint8_t buffer[256];
+
+    // Structs for handle the buffer.
+    ucdrBuffer writer;
+    ucdrBuffer reader;
+
+    // Initialize the MicroBuffers for working with an user-managed buffer.
+    ucdr_init_buffer(&writer, buffer, 256);
+    ucdr_init_buffer(&reader, buffer, 256);
+
+    // Serialize data
+    char input[16] = "Hello Micro CDR!"; //16 characters
+    ucdr_serialize_array_char(&writer, input, 16);
+
+    // Deserialize data
+    char output[16];
+    ucdr_deserialize_array_char(&reader, output, 16);
+
+    log_info("Asserting that `input` is the same as `output`.");
+    assert(0 == strncmp(input, output, 16));
+//    printf("Input: %s\n", input);
+//    printf("Output: %s\n", output);
+
+    log_info("Finished ros_e2e_micro_cdr_usage_example().");
+    return result_ok();
+}

@@ -12,6 +12,7 @@
 #include "rcl/macros.h"
 //#include "rcl/publisher.h"
 //#include "rcl/logging.h"
+#include "ucdr/microcdr.h"
 
 /**
  * Runs all tests for `rcutils` functions.
@@ -75,3 +76,8 @@ result_t ros_e2e_rcutils_exists(void);
 
 result_t ros_e2e_rmw_get_zero_initialized_context(void);
 
+/* ================================
+ * Micro CDR
+ * ================================ */
+
+result_t ros_e2e_micro_cdr_usage_example(void);

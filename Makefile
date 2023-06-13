@@ -41,6 +41,7 @@ resources-decompile-dtb-rpi3bp:
 # Build
 # =================================
 
+# Do NOT run this command remotely because this command runs a remote command.
 .PHONY: build
 build: build-rcutils build-rcl build-rmw
 
@@ -82,6 +83,7 @@ build-rcl:
 	mkdir -p $(SRC_DIR)/lib_rcl/rcl
 	cp -r $(RCL_SUBMODULE)/rcl/include/rcl $(SRC_DIR)/lib_rcl/
 
+# Do NOT run this command remotely because this command runs a remote command.
 .PHONY: clean-rmw
 clean-rmw:
 	# Remotely run the build command in rmw submodule.

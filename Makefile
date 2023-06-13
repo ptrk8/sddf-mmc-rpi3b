@@ -41,6 +41,9 @@ resources-decompile-dtb-rpi3bp:
 # Build
 # =================================
 
+.PHONY: build
+build: build-rcutils build-rcl build-rmw
+
 # Do NOT run this command remotely because this command runs a remote command.
 .PHONY: clean-rcutils
 clean-rcutils:

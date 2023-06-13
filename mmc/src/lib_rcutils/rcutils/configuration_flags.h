@@ -11,6 +11,7 @@ extern "C"
 #define RCUTILS_AVOID_DYNAMIC_ALLOCATION
 #define RCUTILS_NO_THREAD_SUPPORT
 #define RCUTILS_NO_ASSERT
+#define RCUTILS_SEL4CP
 
 #ifdef __cplusplus
 }

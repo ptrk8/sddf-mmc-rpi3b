@@ -53,6 +53,7 @@ build: \
 	build-rcutils \
 	build-rcl \
 	build-rmw \
+	build-microcdr \
 	build-microxrcedds-client
 
 # Do NOT run this command remotely because this command runs a remote command.

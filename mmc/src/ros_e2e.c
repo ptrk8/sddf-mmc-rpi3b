@@ -342,6 +342,12 @@ result_t ros_e2e_rmw_get_zero_initialized_context(void) {
 }
 
 /* ================================
+ * Micro XRCE DDS
+ * ================================ */
+
+/* TODO: Write some E2E tests. */
+
+/* ================================
  * Micro CDR
  * ================================ */
 

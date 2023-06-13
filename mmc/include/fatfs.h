@@ -19,6 +19,8 @@
 /* The largest possible cluster size for FAT file systems is 256KB. */
 #define MAX_FAT_CLUSTER_SIZE (0x40000)
 
+#define HEAP_SIZE_IN_BYTES (0x100000)
+
 /**
  * Obtains the size of a FAT cluster in bytes.
  * @param mmc_driver_client

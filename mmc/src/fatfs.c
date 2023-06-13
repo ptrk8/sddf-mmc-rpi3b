@@ -17,7 +17,7 @@ uintptr_t mmc_driver_shared_data;
 mmc_driver_client_t global_mmc_driver_client = {0};
 
 /* Global static space allocated for the heap. */
-uint8_t heap[0x100000] = {0};
+uint8_t heap[HEAP_SIZE_IN_BYTES] = {0};
 
 result_t fatfs_get_cluster_size_in_bytes(
         mmc_driver_client_t *mmc_driver_client,
@@ -198,7 +198,7 @@ void init(void) {
 
     /* End-to-end tests to verify ROS functionality. */
 
-    res = ros_e2e_run_all_tests();
+    res = ros_e2e_run_all_tests(HEAP_SIZE_IN_BYTES);
     if (result_is_err(res)) {
         result_printf(res);
         return;

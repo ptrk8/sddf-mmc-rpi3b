@@ -7,6 +7,7 @@
 #include "ff.h"
 
 #include "rcutils/filesystem.h"
+#include "rcutils/allocator.h"
 #include "rmw/init.h"
 #include "rcl/macros.h"
 //#include "rcl/publisher.h"
@@ -14,13 +15,37 @@
 
 /**
  * Runs all tests for `rcutils` functions.
+ * @param heap_size Heap size in bytes.
  * @return
  */
-result_t ros_e2e_run_all_tests(void);
+result_t ros_e2e_run_all_tests(size_t heap_size);
 
 /* ================================
  * rcutils
  * ================================ */
+
+/* allocator.c */
+
+/**
+ * Tests the `__default_allocate` function.
+ * @param heap_size Heap size in bytes.
+ * @return
+ */
+result_t ros_e2e_rcutils_allocate(size_t heap_size);
+
+/**
+ * Tests the `__default_zero_allocate` function.
+ * @param heap_size Heap size in bytes.
+ * @return
+ */
+result_t ros_e2e_rcutils_zero_allocate(size_t heap_size);
+
+/**
+ * Tests the `__default_reallocate` function.
+ * @param heap_size Heap size in bytes.
+ * @return
+ */
+result_t ros_e2e_rcutils_reallocate(size_t heap_size);
 
 /* filesystem.c */
 

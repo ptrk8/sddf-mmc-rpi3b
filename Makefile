@@ -30,6 +30,10 @@ ROSIDL_RUNTIME_C_HEADERS := $(SRC_DIR)/lib_rosidl_runtime_c/
 
 ROSIDL_TYPESUPPORT_INTERFACE_HEADERS := $(SRC_DIR)/lib_rosidl_typesupport_interface/
 
+RMW_MICROXRCEDDS_LIBRARY := $(LIB_DIR)/librmw_microxrcedds
+RMW_MICROXRCEDDS_SUBMODULE := $(RMW_MICROXRCEDDS_LIBRARY)/rmw_microxrcedds-sel4cp
+RMW_MICROXRCEDDS_HEADERS := $(SRC_DIR)/lib_rmw_microxrcedds/
+
 REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu2204"
 REMOTE_DEST_DIR = "~/remote/$(shell hostname -s)/"
 
@@ -65,7 +69,11 @@ build: \
 	build-rcl \
 	build-rmw \
 	build-microcdr \
-	build-microxrcedds-client
+	build-microxrcedds-client \
+	build-rosidl-typesupport-microxrcedds-c \
+	build-rosidl-runtime-c \
+	build-rosidl-typesupport-interface \
+	build-rmw-microxrcedds
 
 # Do NOT run this command remotely because this command runs a remote command.
 .PHONY: clean-rcutils
@@ -207,6 +215,29 @@ build-rosidl-typesupport-interface:
 	cp -r \
 		$(ROSIDL_RUNTIME_C_SUBMODULE)/rosidl_typesupport_interface/include/rosidl_typesupport_interface \
 		$(ROSIDL_TYPESUPPORT_INTERFACE_HEADERS)
+
+# Do NOT run this command remotely because this command runs a remote command.
+.PHONY: clean-rmw-microxrcedds
+clean-rmw-microxrcedds:
+	# Remotely run the build command in submodule.
+	$(MAKE) -C $(RMW_MICROXRCEDDS_SUBMODULE) remote MAKE_CMD="clean"
+
+# Do NOT run this command remotely because this command runs a remote command.
+.PHONY: build-rmw-microxrcedds
+build-rmw-microxrcedds: clean-rmw-microxrcedds
+	# Remotely run the build command in submodule.
+	$(MAKE) -C $(RMW_MICROXRCEDDS_SUBMODULE) remote MAKE_CMD="build"
+	scp \
+		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/rmw_microxrcedds-sel4cp/rmw_microxrcedds_c/build/librmw_microxrcedds.a \
+		$(RMW_MICROXRCEDDS_LIBRARY)
+	mkdir -p $(RMW_MICROXRCEDDS_HEADERS)
+	cp -r \
+		$(RMW_MICROXRCEDDS_SUBMODULE)/rmw_microxrcedds_c/include/* \
+		$(RMW_MICROXRCEDDS_HEADERS)
+	# Copy over header files that are built in the remote build directory.
+	scp \
+		$(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)/rmw_microxrcedds-sel4cp/rmw_microxrcedds_c/build/include/rmw_microxrcedds_c/config.h \
+		$(RMW_MICROXRCEDDS_HEADERS)/rmw_microxrcedds_c/config.h
 
 # =================================
 # Testing

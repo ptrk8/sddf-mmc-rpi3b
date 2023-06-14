@@ -20,6 +20,8 @@
 #ifdef UCLIENT_PROFILE_UDP
 #if defined(UCLIENT_PLATFORM_POSIX_NOPOLL)
 #include <uxr/client/profile/transport/ip/udp/udp_transport_posix_nopoll.h>
+#elif defined(UCLIENT_PLATFORM_SEL4CP)
+#include <uxr/client/profile/transport/ip/udp/udp_transport_sel4cp.h>
 #elif defined(UCLIENT_PLATFORM_POSIX)
 #include <uxr/client/profile/transport/ip/udp/udp_transport_posix.h>
 #elif defined(UCLIENT_PLATFORM_WINDOWS)
@@ -35,6 +37,8 @@
 #ifdef UCLIENT_PROFILE_TCP
 #if defined(UCLIENT_PLATFORM_POSIX_NOPOLL)
 #include <uxr/client/profile/transport/ip/tcp/tcp_transport_posix_nopoll.h>
+#elif defined(UCLIENT_PLATFORM_SEL4CP)
+#include <uxr/client/profile/transport/ip/tcp/tcp_transport_sel4cp.h>
 #elif defined(UCLIENT_PLATFORM_POSIX)
 #include <uxr/client/profile/transport/ip/tcp/tcp_transport_posix.h>
 #elif defined(UCLIENT_PLATFORM_WINDOWS)

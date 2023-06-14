@@ -82,12 +82,12 @@ LIBS := \
 	-lsel4cp \
 	-Tsel4cp.ld \
 	-lmemory_freelist \
+	-l:librmw_microxrcedds.a \
 	-l:librmw.a \
 	-l:librcl.a \
-	-l:librcutils.a \
-	-l:librmw_microxrcedds.a \
 	-l:librosidl_typesupport_microxrcedds_c.a \
 	-l:librosidl_runtime_c.a \
+	-l:librcutils.a \
 	-l:libmicroxrcedds_client.a \
 	-l:libmicrocdr.a \
 	-lc \

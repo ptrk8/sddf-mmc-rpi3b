@@ -28,3 +28,4 @@
 [submodule "mmc/lib/librosidl_runtime_c/rosidl-sel4cp"]
 	path = mmc/lib/librosidl_runtime_c/rosidl-sel4cp
 	url = git@github.com:patrick-ros2/rosidl-sel4cp.git
+    branch = humble-sel4cp

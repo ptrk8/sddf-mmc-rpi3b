@@ -103,8 +103,14 @@ build-rcutils: clean-rcutils
 		$(SRC_DIR)/lib_rcutils/rcutils/
 
 # Do NOT run this command remotely because this command runs a remote command.
+.PHONY: clean-rcl
+clean-rcl:
+	# Remotely run the clean command in submodule.
+	$(MAKE) -C $(RCL_SUBMODULE) remote MAKE_CMD="clean"
+
+# Do NOT run this command remotely because this command runs a remote command.
 .PHONY: build-rcl
-build-rcl:
+build-rcl: clean-rcl
 	# Remotely run the build command in rcl submodule.
 	$(MAKE) -C $(RCL_SUBMODULE) remote MAKE_CMD="build"
 	scp \

@@ -1,8 +1,9 @@
 build/
 build-unit-test/
-*.o
+mmc/build/
 *.elf
 *.depend
+.DS_Store
 
 .vscode
 .idea

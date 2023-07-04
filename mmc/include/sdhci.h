@@ -20,6 +20,7 @@
  * Initialises an SD card.
  * @param sdhci_regs
  * @param sdcard
+ * @param sdhci_result
  * @return
  */
 result_t sdhci_card_init_and_id(
@@ -93,10 +94,10 @@ result_t sdhci_write_blocks(
  * Transfers specified number of blocks to/from the SD card.
  * @param sdhci_regs
  * @param sdcard
- * @param lba
- * @param num_blocks
+ * @param lba Logical block address.
+ * @param num_blocks Number of blocks to be transferred.
  * @param block_size The size of each block in bytes.
- * @param is_write
+ * @param is_write Whether transfer is read or write.
  * @param buffer The buffer.
  * @param buffer_len The length of the buffer in bytes.
  * @param sdhci_result

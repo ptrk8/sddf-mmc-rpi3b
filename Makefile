@@ -34,8 +34,41 @@ RMW_MICROXRCEDDS_LIBRARY := $(LIB_DIR)/librmw_microxrcedds
 RMW_MICROXRCEDDS_SUBMODULE := $(RMW_MICROXRCEDDS_LIBRARY)/rmw_microxrcedds-sel4cp
 RMW_MICROXRCEDDS_HEADERS := $(SRC_DIR)/lib_rmw_microxrcedds/
 
-REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu2204"
+REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu1804"
 REMOTE_DEST_DIR = "~/remote/$(shell hostname -s)/"
+
+# =================================
+# Push to remote servers
+# =================================
+
+.PHONY: push-remote
+push-remote:
+	# Make the directory on the remote if it doesn't exist already.
+	(ssh -t $(REMOTE_USER_HOST) "mkdir -p $(REMOTE_DEST_DIR)$(PWD_DIR)")
+	# Sync our current directory with the remote.
+	(rsync -a \
+ 			--delete \
+ 			--exclude "build" \
+ 			--exclude "install" \
+ 			--exclude "log" \
+ 			--exclude "build-remote" \
+ 			--exclude "cmake-build*" \
+ 			--exclude ".vscode" \
+ 			--exclude ".idea" \
+ 			--exclude ".git" \
+ 			--exclude ".gitignore" \
+ 			./ $(REMOTE_USER_HOST):$(REMOTE_DEST_DIR)$(PWD_DIR))
+
+# ==================================
+# Runs a Make command remotely.
+# ==================================
+
+.PHONY: remote
+remote: push-remote
+	ssh -t $(REMOTE_USER_HOST) "\
+		cd $(REMOTE_DEST_DIR)$(PWD_DIR) ; \
+		zsh -ilc 'make $(MAKE_CMD)' ; "
+
 
 .PHONY: directories
 directories:
@@ -62,18 +95,25 @@ resources-decompile-dtb-rpi3bp:
 # Build
 # =================================
 
+.PHONY: build-rmw-impl
+build-rmw-impl: \
+	build-microcdr \
+	build-microxrcedds-client \
+	build-rosidl-runtime-c \
+	build-rosidl-typesupport-microxrcedds-c
+
 # Do NOT run this command remotely because this command runs a remote command.
 .PHONY: build
 build: \
+	build-rmw-impl \
 	build-rcutils \
 	build-rcl \
 	build-rmw \
-	build-microcdr \
-	build-microxrcedds-client \
-	build-rosidl-typesupport-microxrcedds-c \
 	build-rosidl-runtime-c \
 	build-rosidl-typesupport-interface \
 	build-rmw-microxrcedds
+
+# =================================
 
 # Do NOT run this command remotely because this command runs a remote command.
 .PHONY: clean-rcutils

@@ -30,3 +30,7 @@
 	path = mmc/lib/librmw_microxrcedds/rmw_microxrcedds-sel4cp
 	url = git@github.com:patrick-ros2/rmw_microxrcedds-sel4cp.git
     branch = humble-sel4cp
+[submodule "mmc/lib/libros2_tracing/ros2_tracing-sel4cp"]
+	path = mmc/lib/libros2_tracing/ros2_tracing-sel4cp
+	url = git@github.com:patrick-forks/ros2_tracing-sel4cp.git
+    branch = humble-sel4cp

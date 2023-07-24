@@ -32,9 +32,17 @@ result_t ros_e2e_run_all_tests(size_t heap_size) {
     res = ros_e2e_rmw_get_zero_initialized_context();
     if (result_is_err(res)) return res;
 
+    res = ros_e2e_rmw_basic_init_shutdown();
+    if (result_is_err(res)) return res;
+
     /* Micro CDR */
 
     res = ros_e2e_micro_cdr_usage_example();
+    if (result_is_err(res)) return res;
+
+    /* rosidl_runtime_c */
+
+    res = ros_e2e_rosidl_runtime_c__U16String__Sequence__fini();
     if (result_is_err(res)) return res;
 
     /* rosidl_typesupport_microxrcedds_c */
@@ -346,6 +354,23 @@ result_t ros_e2e_rmw_get_zero_initialized_context(void) {
     return result_ok();
 }
 
+result_t ros_e2e_rmw_basic_init_shutdown(void) {
+    log_info("Starting ros_e2e_rmw_basic_init_shutdown().");
+
+    rmw_context_t test_context = rmw_get_zero_initialized_context();
+    rmw_init_options_t test_options = rmw_get_zero_initialized_init_options();
+    (void)test_context;
+    (void)test_options;
+
+//    assert(rmw_init_options_init(&test_options, rcutils_get_default_allocator()) == RMW_RET_OK);
+//    assert(rmw_init(&test_options, &test_context) == RMW_RET_OK);
+//    assert(rmw_init_options_fini(&test_options) == RMW_RET_OK);
+//    assert(rmw_shutdown(&test_context) == RMW_RET_OK);
+
+    log_info("Finished ros_e2e_rmw_basic_init_shutdown().");
+    return result_ok();
+}
+
 /* ================================
  * Micro XRCE DDS
  * ================================ */
@@ -388,6 +413,53 @@ result_t ros_e2e_micro_cdr_usage_example(void) {
     log_info("Finished ros_e2e_micro_cdr_usage_example().");
     return result_ok();
 }
+
+/* ================================
+ * rosidl_runtime_c
+ * ================================ */
+
+/* u16string_functions.c */
+
+result_t ros_e2e_rosidl_runtime_c__U16String__Sequence__fini(void) {
+    log_info("Starting ros_e2e_rosidl_runtime_c__U16String__Sequence__fini().");
+
+    /* Initialising an empty string. */
+    rosidl_runtime_c__U16String empty_string;
+    assert(rosidl_runtime_c__U16String__init(&empty_string) == true);
+    assert(empty_string.size == 0u);
+    assert(empty_string.capacity == 1u);
+    assert(empty_string.data[0] == 0u);
+
+    /* Test 1: */
+    rosidl_runtime_c__U16String__fini(&empty_string);
+    assert(empty_string.data == NULL);
+    assert(empty_string.size == 0u);
+    assert(empty_string.capacity == 0u);
+
+    /* Test 2: */
+    rosidl_runtime_c__U16String__fini(NULL);
+
+    log_info("Finished ros_e2e_rosidl_runtime_c__U16String__Sequence__fini().");
+    return result_ok();
+}
+
+/* primitives_sequence_functions.h */
+
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(float)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(double)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(long_double)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(char)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(wchar)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(boolean)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(octet)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(uint8)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(int8)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(uint16)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(int16)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(uint32)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(int32)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(uint64)
+ROSIDL_RUNTIME_C__DECLARE_PRIMITIVE_SEQUENCE_FUNCTIONS(int64)
 
 /* ================================
  * rosidl_typesupport_microxrcedds_c

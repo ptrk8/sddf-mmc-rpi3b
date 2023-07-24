@@ -14,6 +14,8 @@
 //#include "rcl/logging.h"
 #include "ucdr/microcdr.h"
 #include "rosidl_typesupport_microxrcedds_c/message_type_support.h"
+#include "rosidl_runtime_c/u16string_functions.h"
+#include "rosidl_runtime_c/primitives_sequence_functions.h"
 
 /**
  * Runs all tests for `rcutils` functions.
@@ -77,11 +79,21 @@ result_t ros_e2e_rcutils_exists(void);
 
 result_t ros_e2e_rmw_get_zero_initialized_context(void);
 
+result_t ros_e2e_rmw_basic_init_shutdown(void);
+
 /* ================================
  * Micro CDR
  * ================================ */
 
 result_t ros_e2e_micro_cdr_usage_example(void);
+
+/* ================================
+ * rosidl_runtime_c
+ * ================================ */
+
+/* u16string_functions.c */
+
+result_t ros_e2e_rosidl_runtime_c__U16String__Sequence__fini(void);
 
 /* ================================
  * rosidl_typesupport_microxrcedds_c

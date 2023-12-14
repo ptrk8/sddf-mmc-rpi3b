@@ -4,7 +4,7 @@
     branch = humble-sel4cp
 [submodule "mmc/lib/librcl/rcl-sel4cp"]
 	path = mmc/lib/librcl/rcl-sel4cp
-	url = git@github.com:ptrk8/rcl-sel4cp.git
+	url = git@github.com:patrick-ros2/rcl-sel4cp.git
     branch = humble-sel4cp
 [submodule "mmc/lib/librmw/rmw-sel4cp"]
 	path = mmc/lib/librmw/rmw-sel4cp

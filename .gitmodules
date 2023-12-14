@@ -32,5 +32,5 @@
     branch = humble-sel4cp
 [submodule "mmc/lib/libros2_tracing/ros2_tracing-sel4cp"]
 	path = mmc/lib/libros2_tracing/ros2_tracing-sel4cp
-	url = git@github.com:patrick-forks/ros2_tracing-sel4cp.git
+	url = git@github.com:patrick-ros2/ros2_tracing-sel4cp.git
     branch = humble-sel4cp

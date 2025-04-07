@@ -10,3 +10,4 @@ mmc/build/
 cmake-build*
 out
 compile_commands.json
+.cache

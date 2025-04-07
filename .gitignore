@@ -8,3 +8,5 @@ mmc/build/
 .vscode
 .idea
 cmake-build*
+out
+compile_commands.json

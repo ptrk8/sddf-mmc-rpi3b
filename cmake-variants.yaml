@@ -1,0 +1,13 @@
+buildType:
+  default: debug
+  choices:
+    debug:
+      short: Debug
+      long: Emit debug information
+      buildType: Debug
+    test:
+      short: Test
+      long: Unit test code
+      buildType: Debug
+      settings:
+        MMC_RPI3B_UNIT_TEST: yes

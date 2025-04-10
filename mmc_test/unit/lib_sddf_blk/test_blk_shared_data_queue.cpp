@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 extern "C" {
 #include "blk_shared_data_queue.h"

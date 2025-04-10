@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 extern "C" {
 #include "sdhci_resp_r1.h"
